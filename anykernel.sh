@@ -157,6 +157,7 @@ chmod -R 766 $initd
 
 # remove mpdecsion binary
 mv $bindir/mpdecision $bindir/mpdecision-rm
+remove_line init.qcom-common.rc " start mpdecision";
 
 # adb secure
 backup_file default.prop;
@@ -168,10 +169,9 @@ backup_file init.qcom-common.rc
 replace_line init.qcom-common.rc "write /sys/block/mmcblk0/queue/scheduler fiops" "    write /sys/block/mmcblk0/queue/scheduler bfq";
 replace_line init.qcom-common.rc "write /sys/block/mmcblk0/queue/scheduler row" "    write /sys/block/mmcblk0/queue/scheduler bfq";
 
-# panel and gamma
-replace_line init.qcom-common.rc "chown system graphics /sys/devices/virtual/graphics/fb0/panel_calibration" "    chown system system /sys/devices/virtual/graphics/fb0/panel_calibration";
-
-
+# fstab
+backup_file fstab.bacon
+replace_file fstab.bacon fstab.bacon
 
 # end ramdisk changes
 
