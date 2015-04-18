@@ -171,7 +171,7 @@ replace_line init.qcom-common.rc "write /sys/block/mmcblk0/queue/scheduler row" 
 
 # fstab
 backup_file fstab.bacon
-replace_file fstab.bacon 766 $patch/fstab.bacon
+replace_file fstab.bacon 750 fstab.bacon;
 
 # end ramdisk changes
 
