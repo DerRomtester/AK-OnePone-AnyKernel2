@@ -155,8 +155,7 @@ dump_boot;
 cp -fp $patch/init.d/* $initd
 chmod -R 766 $initd
 
-# remove mpdecsion binary
-mv $bindir/mpdecision $bindir/mpdecision-rm
+# disable mpdecision for another custom hotplug
 remove_line init.qcom-common.rc " start mpdecision";
 
 # adb secure
