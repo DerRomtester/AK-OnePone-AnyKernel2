@@ -162,6 +162,9 @@ append_file init.bacon.rc "render-post_boot" init.bacon.patch;
 # disable mpdecision for another custom hotplug
 remove_line init.qcom-common.rc " start mpdecision";
 
+# disable stock thermal driver 
+insert_line init.qcom-common.rc "#Disable QCOM Thermal" after "service thermal-engine /system/bin/thermal-engine" "   #Disable QCOM Thermal\n   disabled\n"
+
 # adb secure
 backup_file default.prop;
 replace_string default.prop "ro.adb.secure=0" "ro.adb.secure=1" "ro.adb.secure=0";
