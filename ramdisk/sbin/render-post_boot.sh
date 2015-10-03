@@ -43,6 +43,7 @@ echo 40000 > /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
 echo 30000 > /sys/devices/system/cpu/cpufreq/interactive/timer_rate
 echo 100000 > /sys/devices/system/cpu/cpufreq/interactive/max_freq_hysteresis
 echo -1 > /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+echo 0 > /dev/cpuctl/cpu.notify_on_migrate
 
 ############################
 # Disable Debugging
