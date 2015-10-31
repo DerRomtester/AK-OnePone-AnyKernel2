@@ -20,7 +20,7 @@ echo 1728000 > /sys/module/cpu_boost/parameters/sync_threshold
 # Scheduler and Read Ahead
 #
 echo bfq > /sys/block/mmcblk0/queue/scheduler
-echo 512 > /sys/block/mmcblk0/bdi/read_ahead_kb
+echo 128 > /sys/block/mmcblk0/bdi/read_ahead_kb
 
 ############################
 # GPU Governor
@@ -52,7 +52,7 @@ echo "0" > /sys/module/kernel/parameters/initcall_debug;
 echo "0" > /sys/module/alarm_dev/parameters/debug_mask;
 echo "0" > /sys/module/binder/parameters/debug_mask;
 echo "0" > /sys/module/xt_qtaguid/parameters/debug_mask;
-echo "[Render-Kernel] disable debug mask" | tee /dev/kmsg
+echo "[Tyr-Kernel] disable debug mask" | tee /dev/kmsg
 
 ############################
 # Init.d Support
