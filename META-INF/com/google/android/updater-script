@@ -1,6 +1,5 @@
-ui_print("Installing Tyr Kernel with anykernel ramdisk");
-ui_print("Feel the power of Tyr");
-ui_print("A germanic GOD");
+ui_print("Installing a Toilette");
+ui_print("Oh sry it is a Kernel");
 show_progress(1.34, 4);
 assert(package_extract_dir("", "/tmp/anykernel"));
 run_program("/sbin/busybox", "mount", "/system");
@@ -33,7 +32,7 @@ ifelse(file_getprop("/tmp/anykernel/anykernel.sh", "do.cleanup") == 1,
   (delete_recursive("/tmp/anykernel");
   )
 );
-ui_print("Deleting scripts left from other custom kernels");
+ui_print("0 %");
 delete("/system/etc/init.d/01mpdecision");
 delete("/system/etc/init.d/00tgm");
 delete("/system/etc/init.d/00RenderKernel");
@@ -42,6 +41,8 @@ delete("/sbin/render-post_boot.sh");
 delete("/system/etc/init.d/00ak");
 delete("/sbin/init.render.post_boot.sh");
 unmount("/system");
-ui_print("Complete");
-ui_print("Thank you for installing Tyr Kernel :)");
+ui_print("50 %");
+ui_print("70 %");
+ui_print("100 %");
+ui_print("Just reboot now");
 
