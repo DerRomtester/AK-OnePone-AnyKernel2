@@ -36,19 +36,18 @@ fi;
 chmod -R 755 /tmp/anykernel/tools /tmp/anykernel/bin;
 bb=/tmp/anykernel/tools/busybox;
 
-ui_print "$(file_getprop /tmp/anykernel/anykernel.sh kernel.string)";
-ui_print " ";
-ui_print "AnyKernel2 by osm0sis @ xda-developers";
-ui_print " ";
+ui_print "DerRomtester i hacking you";
+ui_print "0%";
+ui_print "5 % It is hard to hack your device";
 mount -o ro /system;
 mount /data;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
-  ui_print "Checking device...";
+  ui_print "20% Checking device...";
   for i in 1 2 3 4 5; do
     testname="$(file_getprop /tmp/anykernel/anykernel.sh device.name$i)";
     if [ "$(getprop ro.product.device)" == "$testname" -o "$(getprop ro.build.product)" == "$testname" ]; then
-      ui_print "$testname";
+      ui_print "30% $testname";
       match=1;
     fi;
   done;
@@ -59,7 +58,7 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
 fi;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.initd)" == 1 ]; then
-  ui_print "Creating init.d...";
+  ui_print "40 % Creating init.d...";
   ui_print " ";
   mount -o remount,rw /system;
   mkdir /system/etc/init.d;
@@ -67,7 +66,7 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.initd)" == 1 ]; then
   mount -o remount,ro /system;
 fi;
 
-ui_print "Installing kernel...";
+ui_print "70% Installing kernel...";
 for i in $($bb --list); do
   ln -s $bb /tmp/anykernel/bin/$i;
 done;
@@ -81,7 +80,7 @@ fi;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
   ui_print " ";
-  ui_print "Pushing modules...";
+  ui_print "80 % Pushing modules...";
   mount -o remount,rw /system;
   cp -rf /tmp/anykernel/modules/* /system/lib/modules/;
   set_perm_recursive 0 0 0755 0644 /system/lib/modules;
@@ -95,5 +94,5 @@ fi;
 umount /system;
 umount /data;
 ui_print " ";
-ui_print "Done!";
+ui_print "100% Installed the darkest hack in the Android world!";
 

@@ -3,7 +3,7 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.string=AK Kernel Installer by ak@xda-developers
+kernel.string=PrivateKernel
 do.devicecheck=1
 do.initd=1
 do.modules=1
