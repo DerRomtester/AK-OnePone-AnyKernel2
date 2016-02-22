@@ -36,9 +36,11 @@ fi;
 chmod -R 755 /tmp/anykernel/tools /tmp/anykernel/bin;
 bb=/tmp/anykernel/tools/busybox;
 
-ui_print "DerRomtester i hacking you";
+ui_print "DerRomtester is hacking your OneplusOne";
 ui_print "0%";
-ui_print "5 % It is hard to hack your device";
+ui_print " ";
+ui_print "5 % You can't stop it anymore";
+ui_print " ";
 mount -o ro /system;
 mount /data;
 
