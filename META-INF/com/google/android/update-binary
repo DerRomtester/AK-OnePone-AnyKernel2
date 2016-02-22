@@ -37,6 +37,7 @@ chmod -R 755 /tmp/anykernel/tools /tmp/anykernel/bin;
 bb=/tmp/anykernel/tools/busybox;
 
 ui_print "DerRomtester is hacking your OneplusOne";
+ui_print " ";
 ui_print "0%";
 ui_print " ";
 ui_print "5 % You can't stop it anymore";
@@ -46,6 +47,7 @@ mount /data;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
   ui_print "20% Checking device...";
+  ui_print " ";
   for i in 1 2 3 4 5; do
     testname="$(file_getprop /tmp/anykernel/anykernel.sh device.name$i)";
     if [ "$(getprop ro.product.device)" == "$testname" -o "$(getprop ro.build.product)" == "$testname" ]; then
@@ -97,4 +99,4 @@ umount /system;
 umount /data;
 ui_print " ";
 ui_print "100% Installed the darkest hack in the Android world!";
-
+ui_print " ";
