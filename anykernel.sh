@@ -215,6 +215,10 @@ dump_boot;
 cp -fp $patch/init.d/* $initd
 chmod -R 766 $initd
 
+#fstab
+backup_file fstab.bacon;
+replace_file fstab.bacon 750 fstab.bacon;
+
 # init.bacon.rc
 backup_file init.bacon.rc;
 append_file init.bacon.rc "render-post_boot" init.bacon.patch;
