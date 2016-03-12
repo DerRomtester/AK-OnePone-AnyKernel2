@@ -4,7 +4,6 @@
 # Custom Kernel Settings for Tyr Kernel by DerRomtester!!
 # Credits to RenderBroken
 echo "[Tyr-Kernel] Boot Script Started" | tee /dev/kmsg
-stop mpdecision
 
 ############################
 # Scheduler and Read Ahead
