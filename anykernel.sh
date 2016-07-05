@@ -215,20 +215,71 @@ dump_boot;
 cp -fp $patch/init.d/* $initd
 chmod -R 766 $initd
 
-#fstab
-backup_file fstab.bacon;
-replace_file fstab.bacon 750 fstab.bacon;
+# 3.10 ramdisk fixes
+
+## AnyKernel permissions
+chmod -R 755 $ramdisk
+
+## AnyKernel install
+dump_boot;
+
+## 3.10 ramdisk fixes
+
+# fstab
+
+if [ -f fstab.bacon ]; then
+  fstab="fstab.bacon";
+  backup_file $fstab;
+elif [ -f fstab.qcom ]; then
+  fstab="fstab.qcom";
+  backup_file $fstab;
+fi;
+
+if [ -n $fstab ]; then
+  replace_string $fstab "/dev/block/platform/msm_sdcc.1/by-name/userdata     /data           f2fs    nosuid" "/dev/block/platform/msm_sdcc.1/by-name/userdata     /data           f2fs    noatime,nosuid" "/dev/block/platform/msm_sdcc.1/by-name/userdata     /data           f2fs    nosuid";
+  replace_string $fstab "/dev/block/platform/msm_sdcc.1/by-name/cache        /cache          f2fs    nosuid" "/dev/block/platform/msm_sdcc.1/by-name/cache        /cache          f2fs    noatime,nosuid" "/dev/block/platform/msm_sdcc.1/by-name/cache        /cache          f2fs    nosuid";
+fi;
+
+# init.recovery.bacon.rc
+
+if [ -f init.recovery.bacon.rc ]; then
+  qcomrecovery="init.recovery.bacon.rc";
+  backup_file $qcomrecovery;
+fi;
+
+if [ -n $qcomrecovery ]; then
+  replace_string $qcomrecovery "cpubw.47" "cpubw.40" "cpubw.47";
+fi;
+
+# init.qcom.power.rc 
+
+if [ -f init.qcom.power.rc ]; then
+  qcompower="init.qcom.power.rc";
+  backup_file $qcompower;
+fi;
+
+if [ -n $qcompower ]; then
+  replace_string $qcompower "cpubw.47" "cpubw.40" "cpubw.47";
+fi;
 
 # init.bacon.rc
-backup_file init.bacon.rc;
-append_file init.bacon.rc "render-post_boot" init.bacon.patch;
 
-# Disable QCOM Thermal Driver
-insert_line init.qcom-common.rc "#Disable QCOM Thermal" after "service thermal-engine /system/bin/thermal-engine" "   #Disable QCOM Thermal\n   disabled\n"
+if [ -f init.bacon.rc ]; then
+  qcomdevice="init.bacon.rc";
+  backup_file $qcomdevice;
+elif [ -f init.oppo.common.rc ]; then
+  qcomdevice="init.oppo.common.rc";
+  backup_file $qcomdevice;
+fi;
 
-# end ramdisk changes
+if [ -n $qcomdevice ]; then
+  replace_string $qcomdevice "# loc_launcher qcom_oncrps not needed" "    group gps qcom_oncrpc inet" "    # loc_launcher qcom_oncrps not needed\n    group gps inet";
+  replace_string_multiline $qcomdevice "# fix netmgrd service" "service netmgrd \/system\/bin\/netmgrd\n    class main\n    user root\n    group radio" "service netmgrd \/system\/bin\/netmgrd\n    class main\n    user root\n    # fix netmgrd service\n    group radio system";
+  replace_string_multiline $qcomdevice "# fix qmuxd service" "service qmuxd \/system\/bin\/qmuxd\n    class main\n    user radio" "service qmuxd \/system\/bin\/qmuxd\n    class main\n    # fix qmuxd service\n    user root";
+fi;
+
+## 3.10 ramdisk fixes
 
 write_boot;
 
 ## end install
-

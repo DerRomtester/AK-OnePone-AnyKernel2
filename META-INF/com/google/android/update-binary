@@ -36,7 +36,7 @@ fi;
 chmod -R 755 /tmp/anykernel/tools /tmp/anykernel/bin;
 bb=/tmp/anykernel/tools/busybox;
 
-ui_print "DerRomtester is hacking your OneplusOne";
+ui_print "DerRomtester is hacking your OneplusOne with erorcuns 3.10 kernel";
 ui_print " ";
 ui_print "0%";
 ui_print " ";
