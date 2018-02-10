@@ -3,8 +3,8 @@
 # osm0sis @ xda-developers
 
 OUTFD=/proc/self/fd/$2;
-ZIP="$3";
-DIR=`dirname "$ZIP"`;
+ZIPFILE="$3";
+DIR=`dirname "$ZIPFILE"`;
 
 ui_print() {
   until [ ! "$1" ]; do
@@ -16,42 +16,49 @@ show_progress() { echo "progress $1 $2" > $OUTFD; }
 set_perm_recursive() {
   dirs=$(echo $* | $bb awk '{ print substr($0, index($0,$5)) }');
   for i in $dirs; do
-    chown -R $1.$2 $i; chown -R $1:$2 $i;
+    $bb chown -R $1:$2 $i;
     find "$i" -type d -exec chmod $3 {} +;
     find "$i" -type f -exec chmod $4 {} +;
   done;
 }
 file_getprop() { grep "^$2" "$1" | cut -d= -f2; }
 getprop() { test -e /sbin/getprop && /sbin/getprop $1 || file_getprop /default.prop $1; }
-abort() { ui_print "$*"; umount /system; umount /data; exit 1; }
+cleanup() { rm -rf /tmp/anykernel; }
+abort() {
+  if [ ! -f /tmp/anykernel/anykernel.sh -o "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanuponabort 2>/dev/null)" == 1 ]; then
+    ui_print "$*"; cleanup; umount /system; umount /data; exit 1;
+  else
+    ui_print "$*"; umount /system; umount /data; exit 1;
+  fi;
+}
 
 show_progress 1.34 4;
 ui_print " ";
+cleanup;
 mkdir -p /tmp/anykernel/bin;
 cd /tmp/anykernel;
-unzip -o "$ZIP";
+unzip -o "$ZIPFILE";
 if [ $? != 0 -o -z "$(ls /tmp/anykernel/tools)" ]; then
   abort "Unzip failed. Aborting...";
 fi;
 chmod -R 755 /tmp/anykernel/tools /tmp/anykernel/bin;
 bb=/tmp/anykernel/tools/busybox;
 
-ui_print "DerRomtester is hacking your OneplusOne";
+ui_print "$(file_getprop /tmp/anykernel/anykernel.sh kernel.string)";
 ui_print " ";
-ui_print "0%";
+ui_print "AnyKernel2 by osm0sis @ xda-developers";
 ui_print " ";
-ui_print "5 % You can't stop it anymore";
-ui_print " ";
-mount -o ro /system;
-mount /data;
+umount /system 2>/dev/null;
+mount -o ro -t auto /system;
+mount /data 2>/dev/null;
+test -f /system/system/build.prop && root=/system;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
-  ui_print "20% Checking device...";
-  ui_print " ";
+  ui_print "Checking device...";
   for i in 1 2 3 4 5; do
     testname="$(file_getprop /tmp/anykernel/anykernel.sh device.name$i)";
     if [ "$(getprop ro.product.device)" == "$testname" -o "$(getprop ro.build.product)" == "$testname" ]; then
-      ui_print "30% $testname";
+      ui_print "$testname";
       match=1;
     fi;
   done;
@@ -61,18 +68,9 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
   fi;
 fi;
 
-if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.initd)" == 1 ]; then
-  ui_print "40 % Creating init.d...";
-  ui_print " ";
-  mount -o remount,rw /system;
-  mkdir /system/etc/init.d;
-  set_perm_recursive 0 0 0755 0755 /system/etc/init.d;
-  mount -o remount,ro /system;
-fi;
-
-ui_print "70% Installing kernel...";
+ui_print "Installing kernel...";
 for i in $($bb --list); do
-  ln -s $bb /tmp/anykernel/bin/$i;
+  $bb ln -s $bb /tmp/anykernel/bin/$i;
 done;
 if [ $? != 0 -o -z "$(ls /tmp/anykernel/bin)" ]; then
   abort "Recovery busybox setup failed. Aborting...";
@@ -84,19 +82,26 @@ fi;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
   ui_print " ";
-  ui_print "80 % Pushing modules...";
-  mount -o remount,rw /system;
-  cp -rf /tmp/anykernel/modules/* /system/lib/modules/;
-  set_perm_recursive 0 0 0755 0644 /system/lib/modules;
-  mount -o remount,ro /system;
+  ui_print "Pushing modules...";
+  mount -o rw,remount -t auto /system;
+  cp -rf /tmp/anykernel/modules/* $root/system/lib/modules/;
+  set_perm_recursive 0 0 0755 0644 $root/system/lib/modules;
+  mount -o ro,remount -t auto /system;
 fi;
 
+case $(basename "$ZIPFILE" .zip) in
+  *-debugging)
+    ui_print " ";
+    ui_print "Creating debugging archive in zip directory...";
+    $bb tar -czvf "$DIR/anykernel2-$(date +%Y-%m-%d_%H%M%S)-debug.tgz" /tmp/*;
+  ;;
+esac;
+
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanup)" == 1 ]; then
-  rm -rf /tmp/anykernel;
+  cleanup;
 fi;
 
 umount /system;
 umount /data;
 ui_print " ";
-ui_print "100% Installed the darkest hack in the Android world!";
-ui_print " ";
+ui_print "Done!";
